@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.FishNet.Codegen", "Un
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{e13ce6aa-fb07-ddd2-986f-936d45728818}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{475b2b1e-265e-23a6-652a-29c8fcba21eb}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,8 @@ Global
 		{950f153b-e0a2-ed91-f051-f0e607cd4818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{e13ce6aa-fb07-ddd2-986f-936d45728818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{e13ce6aa-fb07-ddd2-986f-936d45728818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{475b2b1e-265e-23a6-652a-29c8fcba21eb}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{475b2b1e-265e-23a6-652a-29c8fcba21eb}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

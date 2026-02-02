@@ -53,6 +53,7 @@
     <Compile Include="Assets\Scripts\Managers\BattleManager.cs" />
     <Compile Include="Assets\UnityPackages\FishNet\Upgrading\MirrorUpgrade.cs" />
     <Compile Include="Assets\UnityPackages\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
+    <Compile Include="Assets\Scripts\Data\LevelData.cs" />
     <Compile Include="Assets\Scripts\Controllers\TileController.cs" />
     <Compile Include="Assets\Scripts\Network\NetworkData.cs" />
     <Compile Include="Assets\Scripts\Managers\BoardManager.cs" />

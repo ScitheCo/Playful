@@ -554,9 +554,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
+  m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 0.5
+  m_Value: 50
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1250,6 +1250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9f5b23fa55c2bd4a812cfcdea9dc3bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardManager
+  currentLevel: {fileID: 11400000, guid: 505c3e5371263f2478f7b3e6bf838576, type: 2}
   width: 7
   height: 8
   spacing: 10
@@ -1459,7 +1460,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1254683581}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1904691256}
+        m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+        m_MethodName: UseSkill
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1270370751
 GameObject:
   m_ObjectHideFlags: 0
@@ -2185,9 +2198,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063d88d06c37d9347be02b02391e0294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleManager
-  maxHealth: 100
-  currentPlayerHealth: 50
-  currentEnemyHealth: 50
+  maxHealth: 1000
+  currentPlayerHealth: 0
+  currentEnemyHealth: 0
   maxMana: 100
   currentMana: 0
   battleSlider: {fileID: 358271877}

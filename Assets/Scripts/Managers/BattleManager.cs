@@ -161,12 +161,17 @@ public class BattleManager : MonoBehaviour
 
     public void UseSkill()
     {
+        // Mana dolu mu kontrolü
         if (currentMana >= maxMana)
         {
-            Debug.Log("Yetenek Kullanıldı!");
-            // Örnek Yetenek: Tahtayı Karıştır
-            // BoardManager.Instance.ShuffleBoard(); <-- Bunu sonra açacağız
+            // SAVAŞÇI YETENEĞİ: AĞIR DARBE
+            // Rakibe anında 200 hasar vurur (Kırmızı taşın 20 katı!)
+            // false = Rakip hasar yiyor demektir.
+            TakeDamage(false, 200f); 
             
+            Debug.Log("YETENEK KULLANILDI: AĞIR DARBE! (200 Hasar)");
+
+            // Manayı sıfırla ve butonu kapat
             currentMana = 0;
             skillButton.interactable = false;
             UpdateManaUI();
