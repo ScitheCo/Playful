@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // TextMeshPro kütüphanesi
+using TMPro; 
 
 public class BattleManager : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class BattleManager : MonoBehaviour
     public float currentPlayerHealth;
     public float currentEnemyHealth;
     
-    // DEFANS SİSTEMİ (YEŞİL TAŞ)
+    // Defans Sistemi (Yeşil Taş)
     private bool isPlayerShieldActive = false;
     private float shieldDuration = 0f;
 
@@ -20,16 +20,21 @@ public class BattleManager : MonoBehaviour
     public float currentMana = 0f;
     
     [Header("UI Referansları")]
-    public Slider battleSlider; // O meşhur Mavi/Kırmızı bar
-    public Image manaBarFill;   // Skill butonu etrafındaki dolum barı
-    public Button skillButton;  // Tıklanacak buton
-    public TextMeshProUGUI timerText; // Süre yazısı
+    public Slider battleSlider; 
+    public Image manaBarFill;   
+    public Button skillButton;  
+    public TextMeshProUGUI timerText; 
     
-    [Header("Yeni UI Referansları (Görsele Göre)")]
-    public TextMeshProUGUI playerHealthText; // Senin altındaki "50" yazısı
-    public TextMeshProUGUI enemyHealthText;  // Rakibin altındaki "50" yazısı
-    public GameObject playerShieldIcon;      // Senin yanındaki kalkan resmi
-    public GameObject enemyShieldIcon;       // Rakibin yanındaki kalkan resmi (Opsiyonel)
+    [Header("Görsel Referanslar")]
+    public TextMeshProUGUI playerHealthText; 
+    public TextMeshProUGUI enemyHealthText;  
+    public GameObject playerShieldIcon;      
+    public GameObject enemyShieldIcon;       
+
+    // --- YENİ: SARSINTI REFERANSI ---
+    [Header("Efekt Referansları")]
+    public ObjectShake cameraShaker; // Inspector'dan TopPanel'i (ObjectShake olan objeyi) buraya sürükle
+    // -------------------------------
 
     [Header("Oyun Ayarları")]
     public float roundTime = 120f; 
@@ -46,7 +51,6 @@ public class BattleManager : MonoBehaviour
         currentEnemyHealth = maxHealth;
         currentMana = 0;
         
-        // Başlangıçta kalkan kapalı
         if(playerShieldIcon) playerShieldIcon.SetActive(false);
         if(enemyShieldIcon) enemyShieldIcon.SetActive(false);
 
@@ -59,7 +63,6 @@ public class BattleManager : MonoBehaviour
     {
         if (!isGameActive) return;
 
-        // Süre Sayacı
         if (roundTime > 0)
         {
             roundTime -= Time.deltaTime;
@@ -70,7 +73,6 @@ public class BattleManager : MonoBehaviour
             EndGame();
         }
 
-        // Kalkan Süresi Sayacı
         if (isPlayerShieldActive)
         {
             shieldDuration -= Time.deltaTime;
@@ -81,21 +83,28 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    // === HASAR VE BAR SİSTEMİ ===
+    // === HASAR VE EFEKT SİSTEMİ ===
     public void TakeDamage(bool isPlayerTakingDamage, float damageAmount)
     {
         if (!isGameActive) return;
 
         if (isPlayerTakingDamage)
         {
-            // Eğer kalkanımız varsa hasarı %70 azalt!
-            if (isPlayerShieldActive) damageAmount *= 0.3f;
+            // Kalkan kontrolü
+            if (isPlayerShieldActive) damageAmount *= 0.3f; // %70 Azalt
             
             currentPlayerHealth -= damageAmount;
+
+            // --- YENİ: EKRAN TİTREŞİMİ ---
+            // Sadece biz hasar aldığımızda ekran titresin
+            if (cameraShaker != null)
+            {
+                // 0.2 saniye boyunca 15 şiddetinde titret
+                cameraShaker.Shake(0.2f, 15f);
+            }
         }
         else
         {
-            // Rakip hasar yiyor
             currentEnemyHealth -= damageAmount;
         }
 
@@ -106,23 +115,18 @@ public class BattleManager : MonoBehaviour
         CheckWinCondition();
     }
 
-    // === YEŞİL TAŞ: KALKAN AÇMA ===
     public void ActivatePlayerShield(float duration)
     {
         isPlayerShieldActive = true;
         shieldDuration = duration;
         
-        if (playerShieldIcon != null) 
-            playerShieldIcon.SetActive(true); // İkonu görünür yap
-            
-        Debug.Log("KALKAN AKTİF! Hasar azalacak.");
+        if (playerShieldIcon != null) playerShieldIcon.SetActive(true);
     }
 
     void DeactivateShield()
     {
         isPlayerShieldActive = false;
-        if (playerShieldIcon != null) 
-            playerShieldIcon.SetActive(false); // İkonu gizle
+        if (playerShieldIcon != null) playerShieldIcon.SetActive(false);
     }
 
     void UpdateBattleBar()
@@ -131,18 +135,15 @@ public class BattleManager : MonoBehaviour
         
         if (totalHealth > 0)
         {
-            // Barın doluluk oranı
             float ratio = currentPlayerHealth / totalHealth;
+            // Slider Max Value 100 olmalı
             battleSlider.value = ratio * 100f; 
 
-            // Altındaki Sayıları Güncelle (Örn: 500 / 1000 yerine %50 gibi görünebilir veya direkt can)
-            // Senin resimdeki gibi basit sayı gösterimi:
             if(playerHealthText) playerHealthText.text = Mathf.FloorToInt(currentPlayerHealth).ToString();
             if(enemyHealthText) enemyHealthText.text = Mathf.FloorToInt(currentEnemyHealth).ToString();
         }
     }
 
-    // === MANA SİSTEMİ ===
     public void AddMana(float amount)
     {
         currentMana += amount;
@@ -152,33 +153,23 @@ public class BattleManager : MonoBehaviour
 
     void UpdateManaUI()
     {
-        if (manaBarFill != null)
-            manaBarFill.fillAmount = currentMana / maxMana;
-
-        if (currentMana >= maxMana)
-            skillButton.interactable = true;
+        if (manaBarFill != null) manaBarFill.fillAmount = currentMana / maxMana;
+        if (currentMana >= maxMana) skillButton.interactable = true;
     }
 
     public void UseSkill()
     {
-        // Mana dolu mu kontrolü
         if (currentMana >= maxMana)
         {
-            // SAVAŞÇI YETENEĞİ: AĞIR DARBE
-            // Rakibe anında 200 hasar vurur (Kırmızı taşın 20 katı!)
-            // false = Rakip hasar yiyor demektir.
+            // ÖRNEK SKILL: AĞIR DARBE
             TakeDamage(false, 200f); 
             
-            Debug.Log("YETENEK KULLANILDI: AĞIR DARBE! (200 Hasar)");
-
-            // Manayı sıfırla ve butonu kapat
             currentMana = 0;
             skillButton.interactable = false;
             UpdateManaUI();
         }
     }
 
-    // === YARDIMCILAR ===
     void UpdateTimerUI()
     {
         int minutes = Mathf.FloorToInt(roundTime / 60F);

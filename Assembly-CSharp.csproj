@@ -54,6 +54,7 @@
     <Compile Include="Assets\UnityPackages\FishNet\Upgrading\MirrorUpgrade.cs" />
     <Compile Include="Assets\UnityPackages\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
     <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
+    <Compile Include="Assets\Scripts\VFX\ObjectShake.cs" />
     <Compile Include="Assets\Scripts\Controllers\ProjectileController.cs" />
     <Compile Include="Assets\Scripts\Data\LevelData.cs" />
     <Compile Include="Assets\Scripts\Controllers\TileController.cs" />

@@ -13,12 +13,19 @@ public class TileController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private RectTransform rectTransform;
     private BoardManager board;
 
+    // Hareket Ayarları
     private bool isMoving = false;
-    private float moveSpeed = 0.2f; // Kayma hızı
+    private float moveSpeed = 0.2f;
 
+    // Swipe Ayarları
     private float swipeThreshold = 30f; 
     private Vector2 startTouchPosition;
     private Vector2 endTouchPosition;
+
+    // --- YENİ: VFX REFERANSI ---
+    [Header("Görsel Efektler")]
+    public GameObject explosionPrefab; // Inspector'dan patlama efektini buraya sürükle
+    // ---------------------------
 
     private void Awake()
     {
@@ -58,15 +65,29 @@ public class TileController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         isMoving = false;
     }
 
-    // === YENİ: PATLAMA EFEKTİ ===
+    // === GÜNCELLENEN PATLAMA FONKSİYONU ===
     public void Explode()
     {
+        // 1. Efekt Yarat
+        if (explosionPrefab != null)
+        {
+            // Efekti taşın olduğu yerde yarat
+            GameObject vfx = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            
+            // Efekt UI içinde düzgün gözüksün diye taşın parent'ına (BoardPanel) bağla
+            vfx.transform.SetParent(transform.parent);
+            vfx.transform.localScale = Vector3.one; 
+            
+            // Efekti 2 saniye sonra temizle
+            Destroy(vfx, 2f);
+        }
+
+        // 2. Küçülerek Yok Ol
         StartCoroutine(ExplodeCoroutine());
     }
 
     IEnumerator ExplodeCoroutine()
     {
-        // Taşı yavaşça küçült
         float elapsed = 0f;
         float duration = 0.2f;
         Vector3 startScale = transform.localScale;
@@ -77,15 +98,13 @@ public class TileController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             elapsed += Time.deltaTime;
             yield return null;
         }
-
-        // Animasyon bitince yok et
         Destroy(gameObject);
     }
-    // ============================
 
+    // === INPUT ===
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (isMoving || board.IsBoardLocked()) return; // Board kilitliyse dokunma
+        if (isMoving || board.IsBoardLocked()) return;
         startTouchPosition = eventData.position;
     }
 

@@ -50,8 +50,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b815989064c70014782fe0f5b8d1e4f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileController
-  speed: 1500
+  speed: 100
   hitThreshold: 10
+  hitEffectPrefab: {fileID: 0}
 --- !u!222 &4001421946171824587
 CanvasRenderer:
   m_ObjectHideFlags: 0
