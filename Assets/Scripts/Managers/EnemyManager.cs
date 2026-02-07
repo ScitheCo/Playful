@@ -5,22 +5,24 @@ public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance;
 
-    [Header("Bot Zorluk Ayarları")]
+    [Header("Bot Davranış Ayarları")]
     public float minAttackInterval = 3f;  
     public float maxAttackInterval = 6f;  
-    public float baseDamage = 15f;        
-    public float skillDamage = 40f;       
 
-    [Header("Davranış Ayarları")]
+    [Header("Olasılıklar")]
     [Range(0, 100)] public int comboChance = 30; 
-    [Range(0, 100)] public int skillChance = 10; 
+    [Range(0, 100)] public int skillChance = 20; 
 
-    [Header("Mermi Sistemi Referansları")]
-    public GameObject projectilePrefab; // Mermi Görseli (Prefab)
-    public Transform firePoint;         // Mermi nereden çıkacak? (Rakip Avatarı)
-    public Transform targetPoint;       // Mermi nereye gidecek? (Player Avatarı veya Bar)
+    [Header("Görsel Referanslar")]
+    public GameObject projectilePrefab; 
+    public Transform firePoint;         
+    public Transform targetPoint;       
 
     private bool isFighting = false;
+    
+    // Verileri BattleManager'dan çekeceğiz
+    private float damageFromProfile;
+    private float speedMultiplier;
 
     private void Awake()
     {
@@ -29,11 +31,32 @@ public class EnemyManager : MonoBehaviour
 
     void Start()
     {
-        // Güvenlik: Referanslar eksikse hata verip durdurmasın, uyarısın.
         if (projectilePrefab == null || firePoint == null || targetPoint == null)
         {
-            Debug.LogWarning("EnemyManager: Mermi referansları eksik! Bot çalışmayacak.");
+            Debug.LogWarning("EnemyManager: Referanslar eksik!");
             return;
+        }
+
+        StartCoroutine(StartBattleDelayed());
+    }
+
+    IEnumerator StartBattleDelayed()
+    {
+        // BattleManager'ın hazırlanmasını bekle
+        yield return new WaitForSeconds(0.5f);
+        
+        // Verileri Yükle
+        if (BattleManager.Instance != null && BattleManager.Instance.enemyProfile != null)
+        {
+            CharacterData data = BattleManager.Instance.enemyProfile;
+            damageFromProfile = data.baseAttackDamage;
+            speedMultiplier = data.attackSpeedMultiplier;
+            Debug.Log($"Bot Hazır: {data.characterName} (Hasar: {damageFromProfile}, Hız: {speedMultiplier}x)");
+        }
+        else
+        {
+            damageFromProfile = 15f; // Varsayılan
+            speedMultiplier = 1f;
         }
 
         StartBattle();
@@ -45,7 +68,6 @@ public class EnemyManager : MonoBehaviour
         {
             isFighting = true;
             StartCoroutine(EnemyLogicLoop());
-            Debug.Log("EnemyManager: Savaş Başladı.");
         }
     }
 
@@ -57,57 +79,56 @@ public class EnemyManager : MonoBehaviour
 
     IEnumerator EnemyLogicLoop()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2f); // Başlangıç nezaketi
 
         while (isFighting)
         {
-            float waitTime = Random.Range(minAttackInterval, maxAttackInterval);
-            yield return new WaitForSeconds(waitTime);
+            // Bekleme süresini karaktere göre ayarla (Hızlı karakter az bekler)
+            float baseWait = Random.Range(minAttackInterval, maxAttackInterval);
+            float actualWait = baseWait / speedMultiplier; 
+            yield return new WaitForSeconds(actualWait);
 
+            // %20 ihtimalle Skill, yoksa Normal Saldırı
             int roll = Random.Range(0, 100);
 
             if (roll < skillChance)
             {
-                // Skill Atışı
-                SpawnProjectile(skillDamage);
-                Debug.Log("<color=red>RAKİP SKILL ATTI!</color>");
+                // Skill Kullan (Mermi yok, direkt yetenek çalışır)
+                if (BattleManager.Instance != null)
+                    BattleManager.Instance.EnemyUseSkill();
             }
             else
             {
-                // Normal Atış
-                SpawnProjectile(baseDamage);
+                // Normal Saldırı (Mermi atar)
+                SpawnProjectile(damageFromProfile);
 
-                // Kombo
+                // Kombo Şansı
                 int comboRoll = Random.Range(0, 100);
                 if (comboRoll < comboChance)
                 {
-                    yield return new WaitForSeconds(0.5f); // Yarım saniye sonra ikinci mermi
-                    SpawnProjectile(baseDamage);
-                    Debug.Log("<color=orange>Rakip Kombo Atışı!</color>");
+                    yield return new WaitForSeconds(0.5f);
+                    SpawnProjectile(damageFromProfile);
                 }
             }
         }
     }
 
-    // === YENİ: MERMİ FIRLATMA ===
     void SpawnProjectile(float damage)
     {
-        // 1. Mermiyi Yarat (Ateşlenme noktasında)
-        // Canvas üzerinde çalıştığımız için parent olarak Canvas'ı veya Root'u vermek iyi olabilir 
-        // ama şimdilik dünya koordinatında instantiate ediyoruz, UI üstünde görünecektir.
-        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-        
-        // Merminin UI'ın altında kalmaması için Canvas'ın bir çocuğu yapmak gerekebilir.
-        // Şimdilik firePoint'in parent'ını (muhtemelen Canvas/TopPanel) parent yapalım:
-        proj.transform.SetParent(firePoint.parent, true);
-        proj.transform.localScale = Vector3.one; // Boyut bozulmasın diye
-
-        // 2. Mermiyi Kur (Hasarı ve Hedefi ver)
-        ProjectileController pc = proj.GetComponent<ProjectileController>();
-        if (pc != null)
+        if (projectilePrefab != null && firePoint != null)
         {
-            // true = EnemyAttack (Yani Player hasar alacak)
-            pc.Initialize(damage, true, targetPoint.position);
+            GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+            
+            // UI hiyerarşisinde doğru yere koy
+            proj.transform.SetParent(firePoint.parent, true);
+            proj.transform.localScale = Vector3.one;
+
+            ProjectileController pc = proj.GetComponent<ProjectileController>();
+            if (pc != null)
+            {
+                // isEnemyAttack = true, Hedef = targetPoint
+                pc.Initialize(damage, true, targetPoint.position);
+            }
         }
     }
 }

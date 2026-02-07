@@ -44,13 +44,16 @@
     <Analyzer Include="D:\Unity Projects\Editor\6000.3.0f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="D:\Unity Projects\Editor\6000.3.0f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="D:\Unity Projects\Editor\6000.3.0f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
-    <Analyzer Include="D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.ai.inference@587873fd5e1b\Runtime\Core\SourceGenerator\SourceGenerators.dll" />
     <Analyzer Include="D:\Unity Projects\Playful-git\Assets\UnityPackages\FishNet\Runtime\Plugins\CodeAnalysis\FishNet.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.ai.inference@587873fd5e1b\Runtime\Core\SourceGenerator\SourceGenerators.dll" />
     <Analyzer Include="D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.dt.app-ui@8ac7e730dd5d\Runtime\SourceGenerators\netstandard2.0\EnumToLowerCase.dll" />
     <Analyzer Include="D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.dt.app-ui@8ac7e730dd5d\Runtime\MVVM\SourceGenerators\netstandard2.0\MVVMSourceGenerators.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\UnityPackages\Demigiant\DOTweenPro\Editor\DOTweenAnimationInspector.cs" />
+    <Compile Include="Assets\UnityPackages\Demigiant\DOTweenPro\Editor\DOTweenPreviewManager.cs" />
     <Compile Include="Assets\Editor\LevelDataEditor.cs" />
+    <None Include="Assets\UnityPackages\Demigiant\DemiLib\Core\Editor\DemiEditor.xml" />
     <Reference Include="UnityEngine">
       <HintPath>D:\Unity Projects\Editor\6000.3.0f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -477,6 +480,9 @@
     <Reference Include="UnityEditor.LinuxStandalone.Extensions">
       <HintPath>D:\Unity Projects\Editor\6000.3.0f1\Editor\Data\PlaybackEngines\LinuxStandaloneSupport\UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="DemiEditor">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\UnityPackages\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.YamlDotNet">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.visualscripting@191c0d7e3b69\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
     </Reference>
@@ -492,8 +498,17 @@
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collab-proxy@3351acaba9c9\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="DemiLib">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\UnityPackages\Demigiant\DemiLib\Core\DemiLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenEditor">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\Plugins\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collab-proxy@3351acaba9c9\Lib\Editor\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenProEditor">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\UnityPackages\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
     </Reference>
     <Reference Include="log4netPlastic">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collab-proxy@3351acaba9c9\Lib\Editor\log4netPlastic.dll</HintPath>
@@ -507,20 +522,44 @@
     <Reference Include="System.IO.Hashing">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
     </Reference>
+    <Reference Include="DOTween">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\UnityPackages\Demigiant\DOTween\DOTween.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.visualscripting@191c0d7e3b69\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="DOTweenPro">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\UnityPackages\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.nuget.newtonsoft-json@4dfd81071c64\Runtime\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="AiEditorToolsSdk">
-      <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.ai.toolkit@b9677ce01ef8\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.visualscripting@191c0d7e3b69\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Identity.Client">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.Identity.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>D:\Unity Projects\Editor\6000.3.0f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -918,15 +957,6 @@
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.2D.Common.Path.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.2D.Common.Path.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.2D.Sprite.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.InternalAPIEngineBridge.001">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.001.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
@@ -939,29 +969,14 @@
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.AI.Assistant.API.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Assistant.API.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.2D.Enhancers.Editor.AIBridge">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.2D.Enhancers.Editor.AIBridge.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.InternalAPIEditorBridge.001">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.001.dll</HintPath>
-    </Reference>
     <Reference Include="PPv2URPConverters">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\PPv2URPConverters.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AI.Navigation.Updater">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Navigation.Updater.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.2D.Common.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.2D.Common.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.AI.Navigation.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.AI.Assistant.Integrations.Profiler.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Assistant.Integrations.Profiler.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime.Shared">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.Shared.dll</HintPath>
@@ -981,9 +996,6 @@
     <Reference Include="Unity.Rider.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.AI.Assistant.Bridge.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Assistant.Bridge.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.InferenceEngine.MacBLAS">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.InferenceEngine.MacBLAS.dll</HintPath>
     </Reference>
@@ -999,9 +1011,6 @@
     <Reference Include="Unity.VisualScripting.Flow">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.AI.Assistant.Tools.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Assistant.Tools.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
     </Reference>
@@ -1010,9 +1019,6 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="glTFast.dots">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\glTFast.dots.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
@@ -1032,9 +1038,6 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
-    <Reference Include="HFDownloader">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\HFDownloader.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
     </Reference>
@@ -1044,14 +1047,8 @@
     <Reference Include="Unity.AppUI">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AppUI.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.2D.Sprite.AIIntegration.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.2D.Sprite.AIIntegration.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Editor.Shared">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.Shared.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.2D.Enhancers.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.2D.Enhancers.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.InputSystem.dll</HintPath>
@@ -1068,14 +1065,8 @@
     <Reference Include="Unity.AppUI.Navigation">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AppUI.Navigation.dll</HintPath>
     </Reference>
-    <Reference Include="glTFast.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\glTFast.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.AI.Navigation">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.AI.Assistant.Agent.Dynamic.Extension.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Assistant.Agent.Dynamic.Extension.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.2D.Editor.Overrides">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.2D.Editor.Overrides.dll</HintPath>
@@ -1113,17 +1104,11 @@
     <Reference Include="Unity.AppUI.MVVM">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AppUI.MVVM.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.AI.Assistant.Runtime">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AI.Assistant.Runtime.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.VisualScripting.Flow.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AppUI.Redux.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.AppUI.Redux.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.2D.Common.Runtime">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.2D.Common.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Collections.dll</HintPath>
@@ -1136,9 +1121,6 @@
     </Reference>
     <Reference Include="Unity.Mathematics">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Serialization">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Multiplayer.Center.Common">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Multiplayer.Center.Common.dll</HintPath>
@@ -1170,20 +1152,11 @@
     <Reference Include="Unity.Collections.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Collections.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Serialization.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Serialization.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.ShaderGraph.Editor">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InferenceEngine.iOSBLAS">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.InferenceEngine.iOSBLAS.dll</HintPath>
-    </Reference>
-    <Reference Include="glTFast">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\glTFast.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Settings.Editor">
-      <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\Unity.Settings.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>D:\Unity Projects\Playful-git\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
@@ -1205,9 +1178,21 @@
       <Project>{8859578b-a1fe-f1f8-0ecb-c0679aeb3519}</Project>
       <Name>FishNet.Runtime</Name>
     </ProjectReference>
+    <ProjectReference Include="PlayFabSDKEditor.csproj">
+      <Project>{dd77ee92-ba58-4160-e6c0-3403b4ecfbc1}</Project>
+      <Name>PlayFabSDKEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="PlayFabEditorExtensions.csproj">
+      <Project>{8a941ced-a0ef-9f93-5ad6-c5c4e9af1d8d}</Project>
+      <Name>PlayFabEditorExtensions</Name>
+    </ProjectReference>
     <ProjectReference Include="FishNet.Codegen.Cecil.csproj">
       <Project>{909641b3-a16e-c49e-bedf-f6433d2f21d6}</Project>
       <Name>FishNet.Codegen.Cecil</Name>
+    </ProjectReference>
+    <ProjectReference Include="PlayFab.csproj">
+      <Project>{6dcf43de-65ab-d427-fb84-e7bf36c6d3c0}</Project>
+      <Name>PlayFab</Name>
     </ProjectReference>
     <ProjectReference Include="GameKit.Dependencies.csproj">
       <Project>{af8deb24-a4ff-de2c-7d72-189649239b66}</Project>

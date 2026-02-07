@@ -4,27 +4,32 @@ public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance;
 
-    [Header("Oyuncu Verileri")]
-    public float maxHealth = 1000f;
+    [Header("Karakter Seçimi (Inspector'dan Ata)")]
+    public CharacterData playerProfile; // Senin Karakterin
+    public CharacterData enemyProfile;  // Rakip Karakter (Bot)
+
+    [Header("Canlı Veriler (Read Only)")]
     public float currentPlayerHealth;
     public float currentEnemyHealth;
+    public float currentMana = 0;
     
+    // Cache (Kısayol) Verileri
+    private float playerMaxHP;
+    private float enemyMaxHP;
+    private float playerMaxMana;
+
     // Defans Sistemi
     private bool isPlayerShieldActive = false;
     private float shieldDuration = 0f;
-
-    [Header("Mana")]
-    public float maxMana = 100f;
-    public float currentMana = 0f;
 
     [Header("Oyun Ayarları")]
     public float roundTime = 120f;
     private bool isGameActive = true;
 
-    // --- İSTATİSTİK VERİLERİ ---
+    // İstatistikler
     [HideInInspector] public float totalDamageDealt = 0;
     [HideInInspector] public float matchDurationCounter = 0;
-    [HideInInspector] public int maxCombo = 0; // Kombo rekoru burada tutulur
+    [HideInInspector] public int maxCombo = 0;
 
     private void Awake()
     {
@@ -33,16 +38,39 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        currentPlayerHealth = maxHealth;
-        currentEnemyHealth = maxHealth;
-        currentMana = 0;
+        // 1. Verileri Profillerden Yükle
+        InitializeCharacters();
+
+        // 2. UI'ı Güncelle
+        UpdateAllUI();
         
-        // İstatistikleri Sıfırla
+        // 3. İstatistikleri Sıfırla
         totalDamageDealt = 0;
         matchDurationCounter = 0;
         maxCombo = 0;
+    }
 
-        UpdateAllUI();
+    void InitializeCharacters()
+    {
+        // Eğer profil atanmadıysa hata vermesin, varsayılan değer kullan
+        if (playerProfile != null)
+        {
+            playerMaxHP = playerProfile.maxHealth;
+            playerMaxMana = playerProfile.maxMana;
+        }
+        else
+        {
+            playerMaxHP = 1000; playerMaxMana = 100;
+            Debug.LogWarning("Player Profile eksik! Varsayılan değerler kullanılıyor.");
+        }
+
+        if (enemyProfile != null) enemyMaxHP = enemyProfile.maxHealth;
+        else enemyMaxHP = 1000;
+
+        // Canları fulle
+        currentPlayerHealth = playerMaxHP;
+        currentEnemyHealth = enemyMaxHP;
+        currentMana = 0;
     }
 
     void Update()
@@ -51,19 +79,16 @@ public class BattleManager : MonoBehaviour
 
         matchDurationCounter += Time.deltaTime;
 
-        // Zamanlayıcı
         if (roundTime > 0)
         {
             roundTime -= Time.deltaTime;
-            var ui = UIManager.Instance?.GetPanel<BattleUI>();
-            if (ui) ui.UpdateTimer(roundTime);
+            UIManager.Instance?.GetPanel<BattleUI>()?.UpdateTimer(roundTime);
         }
         else
         {
             EndGame();
         }
 
-        // Kalkan Süresi
         if (isPlayerShieldActive)
         {
             shieldDuration -= Time.deltaTime;
@@ -71,24 +96,24 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    // === HASAR MANTIĞI ===
+    // === HASAR VE İYİLEŞME ===
     public void TakeDamage(bool isPlayerTakingDamage, float damageAmount)
     {
         if (!isGameActive) return;
 
         if (isPlayerTakingDamage)
         {
-            if (isPlayerShieldActive) damageAmount *= 0.3f; // Kalkan varsa hasar azalır
+            if (isPlayerShieldActive) damageAmount *= 0.3f;
             currentPlayerHealth -= damageAmount;
-            
-            // Ekranı Titret
-            var ui = UIManager.Instance?.GetPanel<BattleUI>();
-            if (ui) ui.ShakeScreen(0.2f, 15f);
+            UIManager.Instance?.GetPanel<BattleUI>()?.ShakeScreen(0.2f, 15f);
         }
         else
         {
+            // Pasif Kontrolü: Player'ın Kırmızı Hasar Çarpanı var mı?
+            if (playerProfile != null) damageAmount *= playerProfile.redDamageMultiplier;
+            
             currentEnemyHealth -= damageAmount;
-            totalDamageDealt += damageAmount; // Hasar istatistiği
+            totalDamageDealt += damageAmount;
         }
 
         currentPlayerHealth = Mathf.Max(0, currentPlayerHealth);
@@ -98,17 +123,57 @@ public class BattleManager : MonoBehaviour
         CheckWinCondition();
     }
 
-    // === KOMBO GÜNCELLEME (BoardManager Çağırır) ===
-    public void UpdateComboStats(int currentChain)
+    // YENİ: İyileşme Fonksiyonu (Heal Skill için)
+    public void Heal(bool isPlayer, float amount)
     {
-        if (currentChain > maxCombo)
+        if (!isGameActive) return;
+
+        if (isPlayer)
         {
-            maxCombo = currentChain;
-            Debug.Log($"Yeni Kombo Rekoru: x{maxCombo}");
+            // Pasif Kontrolü: Yeşil çarpanı
+            if (playerProfile != null) amount *= playerProfile.greenHealMultiplier;
+            
+            currentPlayerHealth += amount;
+            currentPlayerHealth = Mathf.Min(currentPlayerHealth, playerMaxHP);
+        }
+        else
+        {
+            currentEnemyHealth += amount;
+            currentEnemyHealth = Mathf.Min(currentEnemyHealth, enemyMaxHP);
+        }
+        UpdateAllUI();
+    }
+
+    // === YETENEK KULLANIMI (GÜNCELLENDİ) ===
+    public void AddMana(float amount)
+    {
+        // Pasif Kontrolü: Mavi çarpanı
+        if (playerProfile != null) amount *= playerProfile.blueManaMultiplier;
+
+        currentMana += amount;
+        currentMana = Mathf.Min(currentMana, playerMaxMana);
+        UIManager.Instance?.GetPanel<BattleUI>()?.UpdateMana(currentMana, playerMaxMana);
+    }
+
+    public void UseSkill()
+    {
+        // Mana Yeterli mi ve Skill Var mı?
+        if (currentMana >= playerMaxMana && playerProfile != null && playerProfile.activeSkill != null)
+        {
+            // SKILL DATA ÜZERİNDEKİ TETİĞİ ÇEK
+            // Parametreler: (BattleManager Referansı, EnemyManager Referansı, Kullanan Player mı?)
+            playerProfile.activeSkill.Trigger(this, EnemyManager.Instance, true);
+
+            currentMana = 0;
+            UpdateAllUI();
+        }
+        else
+        {
+            Debug.Log("Mana yetersiz veya Skill atanmamış!");
         }
     }
 
-    // === KALKAN VE MANA ===
+    // === GEREKLİ YARDIMCILAR ===
     public void ActivatePlayerShield(float duration)
     {
         isPlayerShieldActive = true;
@@ -122,40 +187,24 @@ public class BattleManager : MonoBehaviour
         UIManager.Instance?.GetPanel<BattleUI>()?.SetPlayerShield(false);
     }
 
-    public void AddMana(float amount)
+    public void UpdateComboStats(int currentChain)
     {
-        currentMana += amount;
-        currentMana = Mathf.Min(currentMana, maxMana);
-        UIManager.Instance?.GetPanel<BattleUI>()?.UpdateMana(currentMana, maxMana);
+        if (currentChain > maxCombo) maxCombo = currentChain;
     }
 
-    public void UseSkill()
-    {
-        if (currentMana >= maxMana)
-        {
-            TakeDamage(false, 200f);
-            currentMana = 0;
-            UpdateAllUI();
-        }
-    }
-
-    // === YARDIMCILAR ===
     void UpdateAllUI()
     {
         var ui = UIManager.Instance?.GetPanel<BattleUI>();
         if (ui != null)
         {
-            ui.UpdateBattleBars(currentPlayerHealth, maxHealth, currentEnemyHealth, maxHealth);
-            ui.UpdateMana(currentMana, maxMana);
+            ui.UpdateBattleBars(currentPlayerHealth, playerMaxHP, currentEnemyHealth, enemyMaxHP);
+            ui.UpdateMana(currentMana, playerMaxMana);
         }
     }
 
     void CheckWinCondition()
     {
-        if (currentEnemyHealth <= 0 || currentPlayerHealth <= 0)
-        {
-            EndGame();
-        }
+        if (currentEnemyHealth <= 0 || currentPlayerHealth <= 0) EndGame();
     }
 
     void EndGame()
@@ -165,14 +214,24 @@ public class BattleManager : MonoBehaviour
 
         bool isVictory = currentPlayerHealth > currentEnemyHealth;
         
-        // EndGameManager'a tüm verileri (Combo dahil) gönder
         if (EndGameManager.Instance != null)
         {
             EndGameManager.Instance.ProcessGameResult(isVictory, totalDamageDealt, maxCombo, matchDurationCounter, currentPlayerHealth);
         }
+    }
+    
+    // === BOT YETENEK KULLANIMI ===
+    public void EnemyUseSkill()
+    {
+        if (enemyProfile != null && enemyProfile.activeSkill != null)
+        {
+            // isPlayer = false gönderiyoruz
+            enemyProfile.activeSkill.Trigger(this, EnemyManager.Instance, false);
+            Debug.Log($"<color=red>Düşman Yetenek Kullandı: {enemyProfile.activeSkill.skillName}</color>");
+        }
         else
         {
-            Debug.LogError("EndGameManager bulunamadı!");
+            Debug.LogWarning("Düşman profili veya yeteneği yok!");
         }
     }
 }
