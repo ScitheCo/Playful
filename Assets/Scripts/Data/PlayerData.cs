@@ -19,6 +19,8 @@ public class PlayerData
 
     // Sahip Olunan Karakterler (İsimleri tutacağız)
     public List<string> unlockedCharacters = new List<string>() { "Warrior" };
+    
+    public string lastSelectedCharacterName = "";
 
     // Constructor (İlk kez oyun açıldığında varsayılan değerler)
     public PlayerData()
@@ -30,6 +32,7 @@ public class PlayerData
         level = 1;
         currentXP = 0;
         requiredXP = 100;
-        unlockedCharacters = new List<string>() { "Warrior" }; 
+        unlockedCharacters = new List<string>() { "Warrior" };
+        lastSelectedCharacterName = unlockedCharacters[0];
     }
 }

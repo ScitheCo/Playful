@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class MainMenuManager : MonoBehaviour
 {
     [Header("Veri")]
-    public List<CharacterData> availableCharacters; // Tüm karakterler listesi
+    public List<CharacterData> availableCharacters; 
     private int currentIndex = 0;
 
     void Start()
@@ -16,11 +16,11 @@ public class MainMenuManager : MonoBehaviour
         LobbyUI lobby = UIManager.Instance.GetPanel<LobbyUI>();
         if (lobby != null)
         {
-            // SAVAŞ Butonu -> Artık direkt oyuna sokar (Seçili mod ile)
+            // SAVAŞ Butonu -> StartGameLoop fonksiyonuna gider
             lobby.playButton.onClick.RemoveAllListeners();
             lobby.playButton.onClick.AddListener(StartGameLoop);
 
-            // Mod Seçim Butonu -> Mod panelini açar (Oyuna sokmaz)
+            // Mod Seçim Butonu -> Mod panelini açar
             lobby.gameModeButton.onClick.RemoveAllListeners();
             lobby.gameModeButton.onClick.AddListener(OpenModeSelection);
 
@@ -28,18 +28,16 @@ public class MainMenuManager : MonoBehaviour
             lobby.heroesButton.onClick.RemoveAllListeners();
             lobby.heroesButton.onClick.AddListener(GoToHeroes);
 
-            // Arkadaş Listesi (Social) -> Henüz yapım aşamasında
+            // Sosyal ve Leaderboard
             lobby.socialButton.onClick.RemoveAllListeners();
             lobby.socialButton.onClick.AddListener(() => Debug.Log("Arkadaş Listesi (Yakında)"));
 
-            // Sıralama (Leaderboard) -> Lobby kapanmaz, üzerine açılır (Overlay)
             if (lobby.leaderboardButton != null)
             {
                 lobby.leaderboardButton.onClick.RemoveAllListeners();
                 lobby.leaderboardButton.onClick.AddListener(OpenLeaderboardOverlay);
             }
 
-            // Ayarlar -> Ayarlar Paneli açılır
             lobby.settingsButton.onClick.RemoveAllListeners();
             lobby.settingsButton.onClick.AddListener(() => SettingsManager.Instance.OpenSettings());
         }
@@ -56,7 +54,6 @@ public class MainMenuManager : MonoBehaviour
             heroesUI.prevButton.onClick.RemoveAllListeners();
             heroesUI.prevButton.onClick.AddListener(PrevCharacter);
 
-            // Geri Butonu -> Karakter menüsü kapanır, Lobby açılır
             heroesUI.backButton.onClick.RemoveAllListeners();
             heroesUI.backButton.onClick.AddListener(GoToLobby);
 
@@ -76,7 +73,6 @@ public class MainMenuManager : MonoBehaviour
         GameModeUI modeUI = UIManager.Instance.GetPanel<GameModeUI>();
         if (modeUI != null)
         {
-            // Mod butonları sadece seçim yapar, oyunu başlatmaz
             modeUI.rankedButton.onClick.RemoveAllListeners();
             modeUI.rankedButton.onClick.AddListener(() => SelectMode(GameMode.Ranked));
 
@@ -90,81 +86,70 @@ public class MainMenuManager : MonoBehaviour
             modeUI.closeButton.onClick.AddListener(() => modeUI.Hide());
         }
 
-        // ------------------------------------------------------------
-        // 4. BAŞLANGIÇ DURUMU
-        // ------------------------------------------------------------
+        // BAŞLANGIÇ: Her şey hazırsa Lobby'e git
         GoToLobby();
     }
 
     // ========================================================================
-    // PANEL GEÇİŞLERİ (NAVİGASYON)
+    // OYUN AKIŞI (GAME FLOW) - KRİTİK DÜZELTME BURADA
     // ========================================================================
 
+    void StartGameLoop()
+    {
+        // 1. GameManager Kontrolü
+        if (GameManager.Instance == null) return;
+
+        // 2. KARAKTER SEÇİLİ Mİ KONTROLÜ (YENİ)
+        if (GameManager.Instance.selectedCharacter == null)
+        {
+            Debug.LogWarning("⚠️ Bir karakter seçmelisin!");
+            
+            // Kullanıcıya görsel bir uyarı ver (Popup veya Karakter ekranına yönlendir)
+            GoToHeroes(); // Otomatik olarak karakter seçme ekranına atıyoruz
+            return;
+        }
+
+        // 3. Her şey tamamsa Eşleşme Sahnesine git
+        GameMode currentMode = GameManager.Instance.currentMode;
+        Debug.Log($"Eşleşme Başlatılıyor... Mod: {currentMode}");
+        
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MatchFindingScene");
+    }
+
+    void SelectMode(GameMode mode)
+    {
+        if (GameManager.Instance != null)
+        {
+            // Modu hem değişkene hem de PlayerPrefs'e kaydeder (GameManager içindeki metod sayesinde)
+            GameManager.Instance.SetGameMode(mode);
+        }
+        
+        Debug.Log($"Mod Seçildi: {mode}");
+        UIManager.Instance.GetPanel<GameModeUI>().Hide();
+        UpdateAllPanels();
+    }
+
+    // ... (GoToLobby, GoToHeroes, OpenModeSelection, OpenLeaderboardOverlay AYNI) ...
+    
     public void GoToLobby()
     {
-        UIManager.Instance.GetPanel<MainMenuUI>().Hide(); // Heroes kapanır
-        UIManager.Instance.GetPanel<LobbyUI>().Show();    // Lobby açılır
+        UIManager.Instance.GetPanel<MainMenuUI>().Hide();
+        UIManager.Instance.GetPanel<LobbyUI>().Show();
         UpdateAllPanels();
     }
 
     public void GoToHeroes()
     {
-        UIManager.Instance.GetPanel<LobbyUI>().Hide();    // Lobby kapanır
-        UIManager.Instance.GetPanel<MainMenuUI>().Show(); // Heroes açılır
+        UIManager.Instance.GetPanel<LobbyUI>().Hide();
+        UIManager.Instance.GetPanel<MainMenuUI>().Show();
         UpdateAllPanels();
     }
 
-    public void OpenModeSelection()
-    {
-        // Mod seçimi Overlay olarak açılır
-        UIManager.Instance.GetPanel<GameModeUI>().Show();
-    }
+    public void OpenModeSelection() => UIManager.Instance.GetPanel<GameModeUI>().Show();
+    public void OpenLeaderboardOverlay() => UIManager.Instance.GetPanel<LeaderboardUI>().Show();
 
-    public void OpenLeaderboardOverlay()
-    {
-        // Lobby GİZLENMEZ, üzerine açılır
-        UIManager.Instance.GetPanel<LeaderboardUI>().Show();
-    }
-
-    // ========================================================================
-    // OYUN AKIŞI (GAME FLOW)
-    // ========================================================================
-
-    // Mod Seçim Panelinden çağrılır
-    void SelectMode(GameMode mode)
-    {
-        // 1. Modu Kaydet
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.currentMode = mode;
-        }
-        
-        Debug.Log($"Mod Seçildi: {mode}");
-
-        // 2. Paneli Kapat
-        UIManager.Instance.GetPanel<GameModeUI>().Hide();
-
-        // 3. Lobby'deki metni güncellemek için refresh at
-        UpdateAllPanels();
-    }
-
-    // Lobby'deki "SAVAŞ" butonundan çağrılır
-    void StartGameLoop()
-    {
-        if (GameManager.Instance != null)
-        {
-            GameMode currentMode = GameManager.Instance.currentMode;
-            Debug.Log($"SAVAŞ BAŞLATILIYOR... Mod: {currentMode}");
-            
-            // FishNet entegrasyonu gelene kadar sahne yükleme:
-            SceneManager.LoadScene("BattleScene");
-        }
-    }
-
-    // ========================================================================
-    // KARAKTER YÖNETİMİ
-    // ========================================================================
-
+    // ... (Karakter Yönetimi (Next, Prev, Equip, Buy) AYNI) ...
+    
     void NextCharacter()
     {
         currentIndex++;
@@ -185,8 +170,7 @@ public class MainMenuManager : MonoBehaviour
         
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.SetCharacter(selectedChar);
-            GameManager.Instance.SaveGame();
+            GameManager.Instance.SetCharacter(selectedChar); // Hem seçer hem PlayFab'a kaydeder
         }
 
         UpdateAllPanels();
@@ -222,20 +206,13 @@ public class MainMenuManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.playerData.unlockedCharacters.Add(charName);
-            GameManager.Instance.SaveGame();
-            
-            // Satın alınca otomatik seç
+            // Satın alınca otomatik seç ve kaydet
             GameManager.Instance.SetCharacter(availableCharacters[currentIndex]);
         }
-        
         UpdateAllPanels();
-        Debug.Log("Satın Alma Başarılı: " + charName);
     }
 
-    // ========================================================================
-    // UI GÜNCELLEME MERKEZİ
-    // ========================================================================
-
+    // UI GÜNCELLEME
     void UpdateAllPanels()
     {
         if (GameManager.Instance == null) return;
@@ -244,19 +221,17 @@ public class MainMenuManager : MonoBehaviour
         CharacterData currentViewChar = availableCharacters[currentIndex];
         CharacterData equippedChar = GameManager.Instance.selectedCharacter;
 
-        // 1. HEROES PANELİNİ GÜNCELLE
+        // Heroes
         MainMenuUI heroesUI = UIManager.Instance.GetPanel<MainMenuUI>();
         if (heroesUI != null && heroesUI.gameObject.activeSelf)
         {
             bool isUnlocked = pData.unlockedCharacters.Contains(currentViewChar.characterName) || currentViewChar.isDefaultUnlocked;
             bool isEquipped = (equippedChar != null && equippedChar.characterName == currentViewChar.characterName);
-
             heroesUI.UpdateVisuals(currentViewChar, pData, isUnlocked, isEquipped);
         }
 
-        // 2. LOBBY PANELİNİ GÜNCELLE
+        // Lobby
         LobbyUI lobby = UIManager.Instance.GetPanel<LobbyUI>();
-        // Lobby her zaman güncel kalsın (Overlay altındayken bile)
         if (lobby != null && lobby.gameObject.activeSelf)
         {
             lobby.UpdateVisuals(pData, equippedChar, GameManager.Instance.currentMode);

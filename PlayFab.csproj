@@ -90,8 +90,8 @@
     <Compile Include="Assets\PlayFabSDK\Matchmaker\PlayFabMatchmakerModels.cs" />
     <Compile Include="Assets\PlayFabSDK\Client\PlayFabClientAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Matchmaker\PlayFabMatchmakerInstanceAPI.cs" />
-    <Compile Include="Assets\PlayFabSDK\Multiplayer\PlayFabEvents.cs" />
     <Compile Include="Assets\PlayFabSDK\Shared\Internal\PlayFabHttp\GzipDownloadHandler.cs" />
+    <Compile Include="Assets\PlayFabSDK\Multiplayer\PlayFabEvents.cs" />
     <Compile Include="Assets\PlayFabSDK\Shared\Public\ITransportPlugin.cs" />
     <Compile Include="Assets\PlayFabSDK\Progression\PlayFabEvents.cs" />
     <Compile Include="Assets\PlayFabSDK\Economy\PlayFabEconomyModels.cs" />
@@ -121,14 +121,14 @@
     <Compile Include="Assets\PlayFabSDK\Localization\PlayFabLocalizationAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Profiles\PlayFabProfilesAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Data\PlayFabDataModels.cs" />
-    <Compile Include="Assets\PlayFabSDK\Progression\PlayFabProgressionInstanceAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Shared\Internal\SingletonMonoBehaviour.cs" />
+    <Compile Include="Assets\PlayFabSDK\Progression\PlayFabProgressionInstanceAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Client\PlayFabDeviceUtil.cs" />
     <Compile Include="Assets\PlayFabSDK\Addon\PlayFabAddonAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Server\PlayFabEvents.cs" />
+    <Compile Include="Assets\PlayFabSDK\Shared\Internal\PlayFabErrors.cs" />
     <Compile Include="Assets\PlayFabSDK\Shared\Public\PluginContractKey.cs" />
     <Compile Include="Assets\PlayFabSDK\Shared\Internal\Log.cs" />
-    <Compile Include="Assets\PlayFabSDK\Shared\Internal\PlayFabErrors.cs" />
     <Compile Include="Assets\PlayFabSDK\Matchmaker\PlayFabMatchmakerAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Progression\PlayFabProgressionAPI.cs" />
     <Compile Include="Assets\PlayFabSDK\Client\PlayFabClientInstanceAPI.cs" />
@@ -559,6 +559,9 @@
     <Reference Include="Unity.VisualScripting.YamlDotNet">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.visualscripting@191c0d7e3b69\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Collections.LowLevel.ILSupport">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
     </Reference>
@@ -567,6 +570,12 @@
     </Reference>
     <Reference Include="FishNet.CodeAnalysis">
       <HintPath>D:\Unity Projects\Playful-git\Assets\UnityPackages\FishNet\Runtime\Plugins\CodeAnalysis\FishNet.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Identity.Client">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.Identity.Client.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collab-proxy@3351acaba9c9\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
@@ -604,8 +613,8 @@
     <Reference Include="DOTweenPro">
       <HintPath>D:\Unity Projects\Playful-git\Assets\UnityPackages\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.nuget.newtonsoft-json@4dfd81071c64\Runtime\Newtonsoft.Json.dll</HintPath>
@@ -619,20 +628,11 @@
     <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
       <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Tokens">
-      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>D:\Unity Projects\Playful-git\Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Logging">
       <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Identity.Client">
-      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.Identity.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
-      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IdentityModel.Tokens.Jwt">
-      <HintPath>D:\Unity Projects\Playful-git\Assets\PlayFabEditorExtensions\Editor\Resources\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>D:\Unity Projects\Editor\6000.3.0f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
