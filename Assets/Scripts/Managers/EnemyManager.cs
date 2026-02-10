@@ -31,6 +31,16 @@ public class EnemyManager : MonoBehaviour
 
     void Start()
     {
+        // --- MULTIPLAYER KONTROLÜ ---
+        // Eğer Ranked modundaysak (yani Online oynuyorsak), bu bot scriptini yok et.
+        if (GameManager.Instance.currentMode == GameMode.Ranked)
+        {
+            Debug.Log("Ranked Modu: Bot devre dışı bırakılıyor.");
+            Destroy(gameObject); // Kendini yok et
+            return;
+        }
+        // ----------------------------
+        
         if (projectilePrefab == null || firePoint == null || targetPoint == null)
         {
             Debug.LogWarning("EnemyManager: Referanslar eksik!");

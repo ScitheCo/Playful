@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 // Bu script SADECE Karakter Seçim/Satın Alma Panelini yönetir.
-public class MainMenuUI : BasePanel
+public class HeroesUI : BasePanel
 {
     [Header("Navigasyon")]
     public Button backButton; // Lobby'e dönen buton (<)
@@ -32,14 +33,15 @@ public class MainMenuUI : BasePanel
     public Button buyGemButton;         // Elmasla Al
     public TextMeshProUGUI gemPriceText;
 
-    [Header("Oyuncu Cüzdanı (Referans)")]
-    public TextMeshProUGUI playerGoldText;
-    public TextMeshProUGUI playerGemText;
-
     public override void Init()
     {
         base.Init();
         // Buton dinleyicilerini Manager atayacak
+    }
+
+    private void Start()
+    {
+        
     }
 
     // Ekranı Verilerle Doldur
@@ -59,10 +61,6 @@ public class MainMenuUI : BasePanel
         healthBar.value = charData.maxHealth / 2000f; 
         manaBar.value = charData.maxMana / 200f;
         damageBar.value = charData.baseAttackDamage / 100f;
-
-        // 3. Cüzdanı Güncelle
-        playerGoldText.text = playerData.gold.ToString();
-        playerGemText.text = playerData.gems.ToString();
 
         // 4. Kilit / Satın Alma Mantığı
         if (isUnlocked)

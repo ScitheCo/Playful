@@ -3,35 +3,37 @@ using System.Collections.Generic;
 [System.Serializable]
 public class PlayerData
 {
-    public string username = "Player";
-    public int gold = 0;
-    public int gems = 0;
+    public string username = "NewPlayer";
     
-    // --- AYARLAR (YENİ) ---
+    public int avatarId = 0; // Seçili avatarın ID'si (List sırası)
+    public int frameId = 0;  // Seçili çerçevenin ID'si
+    
+    // Ekonomi
+    public int gold = 1000;
+    public int gems = 10;
+    
+    // Ayarlar
     public float musicVolume = 1.0f;
     public float sfxVolume = 1.0f;
     
-    // İlerleme Verileri
+    // İlerleme
     public int elo = 1200;
     public int level = 1;
     public float currentXP = 0;
     public float requiredXP = 100;
-
-    // Sahip Olunan Karakterler (İsimleri tutacağız)
-    public List<string> unlockedCharacters = new List<string>() { "Warrior" };
     
-    public string lastSelectedCharacterName = "";
+    // Karakterler
+    public List<string> unlockedCharacters = new List<string>() { "Warrior" }; // Varsayılan açık karakter
+    public string lastSelectedCharacterName = "Warrior"; // Varsayılan seçili
 
-    // Constructor (İlk kez oyun açıldığında varsayılan değerler)
     public PlayerData()
     {
+        // Constructor: İlk açılış değerleri
         username = "NewPlayer";
-        gold = 1000; // Başlangıç hediyesi
+        gold = 1000;
         gems = 10;
         elo = 1200;
         level = 1;
-        currentXP = 0;
-        requiredXP = 100;
         unlockedCharacters = new List<string>() { "Warrior" };
         lastSelectedCharacterName = unlockedCharacters[0];
     }

@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using PlayFab;
 using PlayFab.ClientModels;
-using Newtonsoft.Json; // JSON İşlemleri için
+using Newtonsoft.Json;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,10 +13,26 @@ public class GameManager : MonoBehaviour
     public PlayerData playerData = new PlayerData();
     public CharacterData selectedCharacter;
     public GameMode currentMode;
+    
+    [Header("Görsel Kütüphane (Inspector'dan Doldur!)")]
+    public List<Sprite> avatarList; // Tüm avatarları buraya sürükle
+    public List<Sprite> frameList;  // Tüm çerçeveleri buraya sürükle
 
-    [Header("Veritabanı (Referans)")]
-    // Oyundaki TÜM karakterleri buraya elle eklemelisin!
-    // Oyun açıldığında kayıtlı ismi bu listede arayacağız.
+    [Header("Mevcut Maç Verileri (YENİ)")]
+    // Savaş sahnesine taşınacak rakip verileri
+    public string currentEnemyName = "Enemy";
+    public int currentEnemyElo = 1200;
+    public int currentEnemyLevel = 1;
+    public CharacterData currentEnemyCharacter; // Rakibin karakteri
+    public int currentEnemyAvatarId = 0;
+    public int currentEnemyFrameId = 0;
+    
+    // Fake Bot Kontrolü
+    public bool isFakeBotMatch = false; 
+
+    public event Action OnDataUpdated;
+
+    [Header("Veritabanı")]
     public List<CharacterData> allCharacters; 
 
     private void Awake()
@@ -24,85 +41,79 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            LoadLocalSettings(); // Oyun Modunu yükle
+            LoadLocalSettings();
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        else { Destroy(gameObject); }
+    }
+    
+    // --- RESİM GETİRME YARDIMCILARI ---
+    public Sprite GetAvatarSprite(int id)
+    {
+        if (avatarList != null && id >= 0 && id < avatarList.Count) return avatarList[id];
+        return null; // veya varsayılan bir sprite
     }
 
-    // --- 1. GAME MODE KAYIT SİSTEMİ (PlayerPrefs) ---
+    public Sprite GetFrameSprite(int id)
+    {
+        if (frameList != null && id >= 0 && id < frameList.Count) return frameList[id];
+        return null;
+    }
+
+    // --- RAKİP VERİSİ KAYDETME (GÜNCELLENDİ) ---
+    public void SetMatchOpponent(string name, int elo, int level, string charName, int avatarId, int frameId)
+    {
+        currentEnemyName = name;
+        currentEnemyElo = elo;
+        currentEnemyLevel = level;
+        currentEnemyAvatarId = avatarId;
+        currentEnemyFrameId = frameId;
+        
+        CharacterData foundChar = allCharacters.Find(x => x.characterName == charName);
+        if (foundChar != null) currentEnemyCharacter = foundChar;
+        else if (allCharacters.Count > 0) currentEnemyCharacter = allCharacters[0];
+    }
+
     public void SetGameMode(GameMode mode)
     {
         currentMode = mode;
+        isFakeBotMatch = false; 
         PlayerPrefs.SetInt("LastGameMode", (int)mode);
         PlayerPrefs.Save();
     }
 
     private void LoadLocalSettings()
     {
-        if (PlayerPrefs.HasKey("LastGameMode"))
-        {
-            currentMode = (GameMode)PlayerPrefs.GetInt("LastGameMode");
-        }
-        else
-        {
-            currentMode = GameMode.Casual; // Varsayılan
-        }
+        if (PlayerPrefs.HasKey("LastGameMode")) currentMode = (GameMode)PlayerPrefs.GetInt("LastGameMode");
+        else currentMode = GameMode.Casual;
     }
 
-    // --- 2. KARAKTER SEÇİM SİSTEMİ ---
     public void SetCharacter(CharacterData character)
     {
         selectedCharacter = character;
-        
-        // İsmi veriye kaydet
         if (character != null)
         {
             playerData.lastSelectedCharacterName = character.characterName;
-            SaveGame(); // PlayFab'a yolla
+            SaveGame(); 
         }
     }
 
-    // PlayFab'dan veri gelince bu fonksiyonu çağıracağız (PlayFabManager içinden)
     public void OnDataLoadedFromPlayFab(PlayerData loadedData)
     {
         playerData = loadedData;
-
-        // Kayıtlı karakter ismini bul ve objeyi seç
         if (!string.IsNullOrEmpty(playerData.lastSelectedCharacterName))
         {
             CharacterData foundChar = allCharacters.Find(x => x.characterName == playerData.lastSelectedCharacterName);
-            if (foundChar != null)
-            {
-                selectedCharacter = foundChar;
-                Debug.Log($"Otomatik Seçilen Karakter: {foundChar.characterName}");
-            }
+            if (foundChar != null) selectedCharacter = foundChar;
         }
-        
-        // Eğer hiç karakter yoksa ve varsayılan bir karakter varsa onu seçtir
-        if (selectedCharacter == null && allCharacters.Count > 0)
-        {
-             // Opsiyonel: selectedCharacter = allCharacters[0];
-        }
+        OnDataUpdated?.Invoke();
     }
 
-    // --- 3. PLAYFAB KAYIT (Basitleştirilmiş Entegrasyon) ---
     public void SaveGame()
     {
-        if (!PlayFabClientAPI.IsClientLoggedIn()) return;
-
-        var request = new UpdateUserDataRequest
-        {
-            Data = new Dictionary<string, string>
-            {
-                { "PlayerData", JsonConvert.SerializeObject(playerData) }
-            }
-        };
-
-        PlayFabClientAPI.UpdateUserData(request, 
-            result => Debug.Log("Veri Kaydedildi"), 
-            error => Debug.LogError("Kayıt Hatası: " + error.ErrorMessage));
+        if (PlayFabManager.Instance != null && PlayFabManager.Instance.isLoggedIn)
+            PlayFabManager.Instance.SaveData(playerData);
     }
+    
+    private void OnApplicationPause(bool pauseStatus) { if (pauseStatus) SaveGame(); }
+    private void OnApplicationQuit() { SaveGame(); }
 }

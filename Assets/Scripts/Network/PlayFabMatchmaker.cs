@@ -10,45 +10,56 @@ public class PlayFabMatchmaker : MonoBehaviour
     [Header("Referanslar")]
     public MatchFindingUI uiController;
 
-    [Header("Durum")]
     private string ticketId;
     private Coroutine pollTicketCoroutine;
     private bool isMatchFound = false;
+    
+    // Timeout Ayarı
+    private float matchTimeout = 120f; 
+    private float currentTimer = 0f;
+    private string[] botNames = { "DragonSlayer", "ShadowHunter", "ProGamer99", "KnightX" };
 
     private void Start()
     {
-        if (PlayFabClientAPI.IsClientLoggedIn())
-        {
-            StartMatchmaking();
-        }
-        else
-        {
-            Debug.LogError("PlayFab Girişi Yapılmamış! Lütfen önce Login olun.");
-        }
+        if (PlayFabClientAPI.IsClientLoggedIn()) StartMatchmaking();
+        else Debug.LogError("PlayFab Girişi Yapılmamış!");
     }
 
     public void StartMatchmaking()
     {
         Debug.Log("Maç Bileti Oluşturuluyor...");
+        currentTimer = 0f;
+        isMatchFound = false;
 
         PlayerData pData = GameManager.Instance.playerData;
         GameMode mode = GameManager.Instance.currentMode;
+        CharacterData myChar = GameManager.Instance.selectedCharacter;
 
-        // UI: Kendi bilgilerimizi (Level dahil) ekrana yaz
-        uiController.SetLocalPlayerInfo(pData, GameManager.Instance.selectedCharacter);
+        // UI Güncelle
+        uiController.SetLocalPlayerInfo(pData, myChar);
 
-        // --- ATTRIBUTES HAZIRLIĞI ---
+        if (mode == GameMode.Practice)
+        {
+            StartCoroutine(FakeMatchRoutine(1f));
+            return;
+        }
+
+        // --- DÜZELTME: İSİM VE KARAKTER BİLGİSİNİ DE GÖNDERİYORUZ ---
         MatchmakingPlayerAttributes attributes = new MatchmakingPlayerAttributes();
         var dataDictionary = new Dictionary<string, object>();
         
-        // ÖNEMLİ: Hangi modda olursak olalım, hem Elo hem Level bilgisini gönderiyoruz.
-        // Böylece karşı taraf bizim levelimizi her zaman görebilir.
         dataDictionary.Add("Elo", pData.elo);
         dataDictionary.Add("Level", pData.level);
+        // Karşı taraf ismimizi ve karakterimizi görsün diye bunları da ekliyoruz:
+        dataDictionary.Add("Name", pData.username); 
+        dataDictionary.Add("CharName", myChar != null ? myChar.characterName : "Warrior");
+        
+        dataDictionary.Add("AvatarId", pData.avatarId);
+        dataDictionary.Add("FrameId", pData.frameId);
 
         attributes.DataObject = dataDictionary;
+        // -----------------------------------------------------------
 
-        // Kuyruk Adını Belirle
         string queueName = (mode == GameMode.Ranked) ? "RankedQueue" : "CasualQueue";
 
         PlayFabMultiplayerAPI.CreateMatchmakingTicket(
@@ -63,7 +74,7 @@ public class PlayFabMatchmaker : MonoBehaviour
                     },
                     Attributes = attributes
                 },
-                GiveUpAfterSeconds = 120, 
+                GiveUpAfterSeconds = (int)matchTimeout, 
                 QueueName = queueName
             },
             OnTicketCreated,
@@ -74,7 +85,6 @@ public class PlayFabMatchmaker : MonoBehaviour
     private void OnTicketCreated(CreateMatchmakingTicketResult result)
     {
         ticketId = result.TicketId;
-        Debug.Log($"Bilet Oluşturuldu! ID: {ticketId}");
         pollTicketCoroutine = StartCoroutine(PollTicketStatus());
     }
 
@@ -82,7 +92,14 @@ public class PlayFabMatchmaker : MonoBehaviour
     {
         while (!isMatchFound)
         {
-            yield return new WaitForSeconds(6.0f); 
+            currentTimer += 6.0f;
+            if (currentTimer >= matchTimeout)
+            {
+                CancelTicketAndStartFakeMatch();
+                yield break;
+            }
+
+            yield return new WaitForSeconds(6.0f);
 
             PlayFabMultiplayerAPI.GetMatchmakingTicket(
                 new GetMatchmakingTicketRequest
@@ -106,15 +123,53 @@ public class PlayFabMatchmaker : MonoBehaviour
         }
         else if (result.Status == "Canceled")
         {
-            isMatchFound = true;
-            Debug.LogWarning("Bilet iptal edildi.");
+            if (!isMatchFound) CancelTicketAndStartFakeMatch();
         }
+    }
+
+    private void CancelTicketAndStartFakeMatch()
+    {
+        isMatchFound = true;
+        if (pollTicketCoroutine != null) StopCoroutine(pollTicketCoroutine);
+
+        if (!string.IsNullOrEmpty(ticketId))
+        {
+            PlayFabMultiplayerAPI.CancelMatchmakingTicket(
+                new CancelMatchmakingTicketRequest
+                {
+                    TicketId = ticketId,
+                    QueueName = GameManager.Instance.currentMode == GameMode.Ranked ? "RankedQueue" : "CasualQueue"
+                }, null, null);
+        }
+        StartCoroutine(FakeMatchRoutine(0.5f));
+    }
+
+    private IEnumerator FakeMatchRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        PlayerData pData = GameManager.Instance.playerData;
+        
+        // Rastgele Bot
+        string fName = botNames[Random.Range(0, botNames.Length)];
+        int fElo = Mathf.Clamp(pData.elo + Random.Range(-50, 50), 0, 9999);
+        int fLevel = Mathf.Clamp(pData.level + Random.Range(-2, 3), 1, 99);
+        CharacterData fChar = null;
+        if (GameManager.Instance.allCharacters.Count > 0)
+            fChar = GameManager.Instance.allCharacters[Random.Range(0, GameManager.Instance.allCharacters.Count)];
+        int fAvatarId = Random.Range(0, GameManager.Instance.avatarList.Count);
+        int fFrameId = Random.Range(0, GameManager.Instance.frameList.Count);
+
+        GameManager.Instance.isFakeBotMatch = true;
+        
+        // SetMatchOpponent ARTIK YENİ PARAMETRELERİ ALIYOR
+        GameManager.Instance.SetMatchOpponent(fName, fElo, fLevel, fChar != null ? fChar.characterName : "Warrior", fAvatarId, fFrameId);
+
+        uiController.SetEnemyInfo(fName, fElo, fLevel, fChar != null ? fChar.characterName : "Unknown", fAvatarId, fFrameId);
+        StartCoroutine(uiController.StartCountdownRoutine(StartGameScene));
     }
 
     private void GetMatchDetails(string matchId)
     {
-        Debug.Log("Rakip Bilgileri Çekiliyor...");
-
         PlayFabMultiplayerAPI.GetMatch(
             new GetMatchRequest
             {
@@ -135,47 +190,65 @@ public class PlayFabMatchmaker : MonoBehaviour
 
         foreach (var member in result.Members)
         {
-            if (member.Entity.Id != myEntityId)
-            {
-                enemy = member;
-                break;
-            }
+            if (member.Entity.Id != myEntityId) { enemy = member; break; }
         }
 
         if (enemy != null)
         {
-            // Verileri Varsayılan Olarak 0 Ayarla
-            int enemyElo = 0;
-            int enemyLevel = 0;
+            int eElo = 0; int eLevel = 0; int eAvatar = 0; int eFrame = 0;
+            string eName = "Enemy"; string eChar = "Warrior";
 
             if (enemy.Attributes != null && enemy.Attributes.DataObject != null)
             {
-                var enemyData = (JsonObject)enemy.Attributes.DataObject;
-
-                // Hem Elo hem Level verisini çekiyoruz
-                if (enemyData.ContainsKey("Elo"))
-                    enemyElo = int.Parse(enemyData["Elo"].ToString());
+                var data = (JsonObject)enemy.Attributes.DataObject;
                 
-                if (enemyData.ContainsKey("Level"))
-                    enemyLevel = int.Parse(enemyData["Level"].ToString());
+                if (data.ContainsKey("Elo")) eElo = int.Parse(data["Elo"].ToString());
+                if (data.ContainsKey("Level")) eLevel = int.Parse(data["Level"].ToString());
+                if (data.ContainsKey("Name")) eName = data["Name"].ToString();
+                if (data.ContainsKey("CharName")) eChar = data["CharName"].ToString();
+                
+                // YENİLERİ OKU
+                if (data.ContainsKey("AvatarId")) eAvatar = int.Parse(data["AvatarId"].ToString());
+                if (data.ContainsKey("FrameId")) eFrame = int.Parse(data["FrameId"].ToString());
             }
 
-            Debug.Log($"Rakip: Elo {enemyElo}, Lvl {enemyLevel}");
+            GameManager.Instance.isFakeBotMatch = false;
+            
+            // Veriyi GameManager'a taşı
+            GameManager.Instance.SetMatchOpponent(eName, eElo, eLevel, eChar, eAvatar, eFrame);
 
-            // UI'ya Gönder (Artık level parametresi de var)
-            uiController.SetEnemyInfo("Enemy Player", enemyElo, enemyLevel, "Unknown Class");
-
+            // UI Güncelle
+            uiController.SetEnemyInfo(eName, eElo, eLevel, eChar, eAvatar, eFrame);
             StartCoroutine(uiController.StartCountdownRoutine(StartGameScene));
         }
     }
 
     private void StartGameScene()
     {
-        Debug.Log("🚀 SAVAŞ BAŞLIYOR! (FishNet Bağlantısı...)");
+        if (GameManager.Instance.isFakeBotMatch)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
+        }
+        else
+        {
+            ConnectNetwork();
+        }
+    }
+
+    private void ConnectNetwork()
+    {
+        bool amIHost = false;
+#if UNITY_EDITOR
+        if (ParrelSync.ClonesManager.IsClone()) amIHost = false; else amIHost = true;
+#else
+        amIHost = false;
+#endif
+        if (FishNetConnectionHandler.Instance != null) FishNetConnectionHandler.Instance.StartConnection(amIHost);
     }
 
     private void OnMatchmakingError(PlayFabError error)
     {
+        if (error.Error == PlayFabErrorCode.MatchmakingTicketMembershipLimitExceeded) return;
         Debug.LogError($"PlayFab Hatası: {error.GenerateErrorReport()}");
     }
 
@@ -183,14 +256,11 @@ public class PlayFabMatchmaker : MonoBehaviour
     {
         if (!isMatchFound && !string.IsNullOrEmpty(ticketId))
         {
-            PlayFabMultiplayerAPI.CancelMatchmakingTicket(
-                new CancelMatchmakingTicketRequest
-                {
-                    TicketId = ticketId,
-                    QueueName = GameManager.Instance.currentMode == GameMode.Ranked ? "RankedQueue" : "CasualQueue"
-                },
-                null, null
-            );
+            PlayFabMultiplayerAPI.CancelMatchmakingTicket(new CancelMatchmakingTicketRequest
+            {
+                TicketId = ticketId,
+                QueueName = GameManager.Instance.currentMode == GameMode.Ranked ? "RankedQueue" : "CasualQueue"
+            }, null, null);
         }
     }
 }
