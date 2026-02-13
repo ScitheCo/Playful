@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using PlayFab;
 using PlayFab.ClientModels;
 using Newtonsoft.Json;
@@ -41,6 +42,11 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Eğer yeni başlıyorsak ve karakter yoksa ekle
+            if (playerData.unlockedCharacters.Count == 0) 
+                playerData.unlockedCharacters.Add("Warrior");
+
             LoadLocalSettings();
         }
         else { Destroy(gameObject); }
@@ -99,13 +105,31 @@ public class GameManager : MonoBehaviour
 
     public void OnDataLoadedFromPlayFab(PlayerData loadedData)
     {
+        // 1. KOPYA TEMİZLİĞİ (Distinct)
+        // Listeyi tarar, aynı isimden birden fazla varsa teke düşürür.
+        if (loadedData.unlockedCharacters != null)
+        {
+            loadedData.unlockedCharacters = loadedData.unlockedCharacters.Distinct().ToList();
+        }
+
+        // 2. GÜVENLİK (Eğer liste boş geldiyse varsayılan karakteri ekle)
+        if (loadedData.unlockedCharacters == null || loadedData.unlockedCharacters.Count == 0)
+        {
+            loadedData.unlockedCharacters = new List<string>() { "Warrior" };
+        }
+
         playerData = loadedData;
+
         if (!string.IsNullOrEmpty(playerData.lastSelectedCharacterName))
         {
             CharacterData foundChar = allCharacters.Find(x => x.characterName == playerData.lastSelectedCharacterName);
             if (foundChar != null) selectedCharacter = foundChar;
         }
+        
         OnDataUpdated?.Invoke();
+        
+        // Temizlenmiş halini hemen kaydet ki buluttaki JSON da düzelsin
+        SaveGame(); 
     }
 
     public void SaveGame()

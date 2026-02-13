@@ -1,7 +1,7 @@
 using UnityEngine;
 using FishNet.Managing;
 using FishNet.Transporting;
-using FishNet.Managing.Scened; // Sahne yönetimi
+using FishNet.Managing.Scened;
 
 public class FishNetConnectionHandler : MonoBehaviour
 {
@@ -29,46 +29,52 @@ public class FishNetConnectionHandler : MonoBehaviour
             Debug.LogError("FishNetConnectionHandler: Sahnede NetworkManager yok!");
         else
         {
-            // Sunucu durumunu dinlemeye başla
             _networkManager.ServerManager.OnServerConnectionState += OnServerConnectionState;
         }
     }
 
     private void OnDestroy()
     {
-        // Dinlemeyi bırak (Hafıza kaçağını önle)
         if (_networkManager != null)
         {
             _networkManager.ServerManager.OnServerConnectionState -= OnServerConnectionState;
         }
     }
 
-    // PlayFabMatchmaker buradan tetikler
     public void StartConnection(bool amIHost)
     {
         if (_networkManager == null) return;
 
+        // Önce temizlik yap (Garanti olsun)
+        StopConnection();
+
         if (amIHost)
         {
             Debug.Log("<color=green>Rol: HOST - Sunucu Başlatılıyor...</color>");
-            // Sadece sunucuyu başlat, sahneyi event içinde yükleyeceğiz
             _networkManager.ServerManager.StartConnection();
-            
-            // Host aynı zamanda bir Client'tır, kendini de bağla
             _networkManager.ClientManager.StartConnection();
         }
         else
         {
             Debug.Log("<color=yellow>Rol: CLIENT - Sunucuya Bağlanılıyor...</color>");
-            // Client direkt bağlanır (IP: localhost varsayılan)
             _networkManager.ClientManager.StartConnection();
         }
     }
 
-    // Sunucu durumu değişince FishNet bu fonksiyonu otomatik çağırır
+    // --- YENİ EKLENEN: BAĞLANTIYI KOPAR ---
+    public void StopConnection()
+    {
+        if (_networkManager == null) return;
+
+        // Hem Sunucuyu hem Client'ı durdur
+        Debug.Log("🔌 FishNet Bağlantısı Temizleniyor...");
+        _networkManager.ServerManager.StopConnection(true);
+        _networkManager.ClientManager.StopConnection();
+    }
+    // ---------------------------------------
+
     private void OnServerConnectionState(ServerConnectionStateArgs args)
     {
-        // Eğer sunucu başarıyla başladıysa (Started)
         if (args.ConnectionState == LocalConnectionState.Started)
         {
             Debug.Log("✅ Sunucu Hazır! Sahne Yükleniyor...");
@@ -79,7 +85,7 @@ public class FishNetConnectionHandler : MonoBehaviour
     private void LoadBattleScene()
     {
         SceneLoadData sld = new SceneLoadData("BattleScene");
-        sld.ReplaceScenes = ReplaceOption.All; // Eski sahneleri kapat
+        sld.ReplaceScenes = ReplaceOption.All;
         _networkManager.SceneManager.LoadGlobalScenes(sld);
     }
 }

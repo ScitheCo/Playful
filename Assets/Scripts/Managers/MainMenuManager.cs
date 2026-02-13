@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using PlayFab;
+using PlayFab.MultiplayerModels;
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
@@ -37,6 +39,44 @@ public class MainMenuManager : MonoBehaviour
 
     void Start()
     {
+        // ------------------------------------------------------------
+        // 1. BAĞLANTI TEMİZLİĞİ (ZOMBİ EŞLEŞMEYİ ÖNLEME)
+        // ------------------------------------------------------------
+        
+        // A) FishNet'i Kapat
+        if (FishNetConnectionHandler.Instance != null)
+        {
+            FishNetConnectionHandler.Instance.StopConnection();
+        }
+
+        // B) PlayFab Biletlerini Zorla İptal Et (Hayalet Bilet Kalmasın)
+        if (PlayFabClientAPI.IsClientLoggedIn())
+        {
+            PlayFabMultiplayerAPI.CancelAllMatchmakingTicketsForPlayer(
+                new CancelAllMatchmakingTicketsForPlayerRequest
+                {
+                    Entity = new EntityKey
+                    {
+                        Id = PlayFabSettings.staticPlayer.EntityId,
+                        Type = PlayFabSettings.staticPlayer.EntityType
+                    },
+                    QueueName = "RankedQueue" // Sırayla hepsini temizle
+                }, null, null);
+
+            PlayFabMultiplayerAPI.CancelAllMatchmakingTicketsForPlayer(
+                new CancelAllMatchmakingTicketsForPlayerRequest
+                {
+                    Entity = new EntityKey
+                    {
+                        Id = PlayFabSettings.staticPlayer.EntityId,
+                        Type = PlayFabSettings.staticPlayer.EntityType
+                    },
+                    QueueName = "CasualQueue"
+                }, null, null);
+            
+            Debug.Log("🧹 Ana Menü: Eski biletler ve bağlantılar temizlendi.");
+        }
+        
         // ------------------------------------------------------------
         // 1. LOBBY PANEL BAĞLANTILARI
         // ------------------------------------------------------------
@@ -206,7 +246,15 @@ public class MainMenuManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
+            // EĞER ZATEN LİSTEDE VARSA EKLEME
+            if (GameManager.Instance.playerData.unlockedCharacters.Contains(charName))
+            {
+                Debug.LogWarning("Bu karakter zaten açık: " + charName);
+                return;
+            }
+
             GameManager.Instance.playerData.unlockedCharacters.Add(charName);
+            
             // Satın alınca otomatik seç ve kaydet
             GameManager.Instance.SetCharacter(availableCharacters[currentIndex]);
         }

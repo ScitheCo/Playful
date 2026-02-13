@@ -113,6 +113,7 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: -580259131370709942}
+  - {fileID: 7789093565156108147}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -123,7 +124,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584310420913703434
+  _initializedTimestamp: -8584306717278112266
   NetworkObserver: {fileID: 0}
   _enablePrediction: 0
   _predictionType: 0
@@ -174,6 +175,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d507ca7dafd2641baaeff37c404fae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkPlayerController
-  _componentIndexCache: 255
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 7090809994495272221}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 7090809994495272221}

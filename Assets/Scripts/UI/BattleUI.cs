@@ -16,6 +16,11 @@ public class BattleUI : BasePanel
     public Image playerFrame;
     public Image enemyAvatar;
     public Image enemyFrame;
+    
+    [Header("UI & VFX Referansları")]
+    public GameObject floatingTextPrefab;
+    public Transform playerTextSpawnPoint;
+    public Transform enemyTextSpawnPoint;
 
     [Header("Mana & Skill")]
     public Image manaBarFill;
@@ -40,6 +45,16 @@ public class BattleUI : BasePanel
         
         // Shake referansı yoksa otomatik bul
         if (cameraShaker == null) cameraShaker = GetComponent<ObjectShake>();
+        
+        // 2. Görsel Yükleme
+        Sprite myAv = GameManager.Instance.GetAvatarSprite(GameManager.Instance.playerData.avatarId);
+        Sprite myFr = GameManager.Instance.GetFrameSprite(GameManager.Instance.playerData.frameId);
+        Sprite enAv = GameManager.Instance.GetAvatarSprite(GameManager.Instance.currentEnemyAvatarId);
+        Sprite enFr = GameManager.Instance.GetFrameSprite(GameManager.Instance.currentEnemyFrameId);
+        SetAvatars(myAv, myFr, enAv, enFr);
+            
+        if (playerTextSpawnPoint == null && playerAvatar != null) playerTextSpawnPoint = playerAvatar.transform;
+        if (enemyTextSpawnPoint == null && enemyAvatar != null) enemyTextSpawnPoint = enemyAvatar.transform;
     }
     
     public void SetAvatars(Sprite pAvatar, Sprite pFrame, Sprite eAvatar, Sprite eFrame)
@@ -48,6 +63,17 @@ public class BattleUI : BasePanel
         if(playerFrame) playerFrame.sprite = pFrame;
         if(enemyAvatar) enemyAvatar.sprite = eAvatar;
         if(enemyFrame) enemyFrame.sprite = eFrame;
+    }
+    
+    public void ShowFloatingText(bool isEnemy, float amount, bool isHeal)
+    {
+        Transform target;
+        if (isEnemy) target = enemyTextSpawnPoint; else { target = playerTextSpawnPoint; }
+        if (floatingTextPrefab == null || target == null) return;
+        GameObject txtObj = Instantiate(floatingTextPrefab, target.position, Quaternion.identity, target.parent);
+        txtObj.transform.position = target.position + new Vector3(Random.Range(-20, 20), 50, 0); 
+        FloatingText ft = txtObj.GetComponent<FloatingText>();
+        if (ft != null) ft.Setup(amount, false, isHeal);
     }
 
     // --- ESKİ FONKSİYON (Geriye uyumluluk için) ---

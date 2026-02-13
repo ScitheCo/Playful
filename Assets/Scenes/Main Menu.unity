@@ -3233,6 +3233,7 @@ MonoBehaviour:
     unlockedCharacters:
     - Warrior
     lastSelectedCharacterName: Warrior
+    matchHistory: []
   selectedCharacter: {fileID: 0}
   currentMode: 1
   avatarList:

@@ -54,9 +54,6 @@ public class MatchFindingUI : MonoBehaviour
         {
             localCharImage.sprite = cData.avatar;
             localCharNameText.text = cData.characterName;
-            
-            // HATALI KOD SİLİNDİ: localAvatar.sprite = cData.avatar; YAPMIYORUZ.
-            // Eğer User Profile resmin varsa buraya ayrıca eklersin.
         }
     }
 

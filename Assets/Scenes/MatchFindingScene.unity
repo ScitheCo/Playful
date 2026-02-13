@@ -2744,6 +2744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MatchFindingUI
   localAvatar: {fileID: 1784166907}
+  localFrame: {fileID: 1254218361}
   localNameText: {fileID: 78657816}
   localEloText: {fileID: 1302810160}
   localLevelText: {fileID: 2049985026}
@@ -2752,6 +2753,7 @@ MonoBehaviour:
   enemySearchingGroup: {fileID: 929656883}
   enemyInfoGroup: {fileID: 2063306440}
   enemyAvatar: {fileID: 623052878}
+  enemyFrame: {fileID: 831357779}
   enemyNameText: {fileID: 911631608}
   enemyEloText: {fileID: 1184806764}
   enemyLevelText: {fileID: 185232565}

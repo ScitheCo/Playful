@@ -1,6 +1,15 @@
 using System.Collections.Generic;
 
 [System.Serializable]
+public class MatchRecord
+{
+    public string opponentName;
+    public string result; // "Victory" veya "Defeat"
+    public int eloChange;
+    public string date;   // Tarih
+}
+
+[System.Serializable]
 public class PlayerData
 {
     public string username = "NewPlayer";
@@ -23,8 +32,11 @@ public class PlayerData
     public float requiredXP = 100;
     
     // Karakterler
-    public List<string> unlockedCharacters = new List<string>() { "Warrior" }; // Varsayılan açık karakter
+    public List<string> unlockedCharacters = new List<string>();
     public string lastSelectedCharacterName = "Warrior"; // Varsayılan seçili
+    
+    // --- YENİ: MAÇ GEÇMİŞİ ---
+    public List<MatchRecord> matchHistory = new List<MatchRecord>();
 
     public PlayerData()
     {
@@ -34,7 +46,8 @@ public class PlayerData
         gems = 10;
         elo = 1200;
         level = 1;
-        unlockedCharacters = new List<string>() { "Warrior" };
-        lastSelectedCharacterName = unlockedCharacters[0];
+        matchHistory = new List<MatchRecord>();
+        unlockedCharacters = new List<string>();
+        lastSelectedCharacterName = "Warrior";
     }
 }

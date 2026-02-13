@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishNet.Codegen.Cecil", "FishNet.Codegen.Cecil.csproj", "{909641b3-a16e-c49e-bedf-f6433d2f21d6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{e13ce6aa-fb07-ddd2-986f-936d45728818}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishNet.Runtime", "FishNet.Runtime.csproj", "{8859578b-a1fe-f1f8-0ecb-c0679aeb3519}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameKit.Dependencies", "GameKit.Dependencies.csproj", "{af8deb24-a4ff-de2c-7d72-189649239b66}"
@@ -15,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.FishNet.Codegen", "Un
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFabEditorExtensions", "PlayFabEditorExtensions.csproj", "{8a941ced-a0ef-9f93-5ad6-c5c4e9af1d8d}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{e13ce6aa-fb07-ddd2-986f-936d45728818}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{475b2b1e-265e-23a6-652a-29c8fcba21eb}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFabSDKEditor", "PlayFabSDKEditor.csproj", "{dd77ee92-ba58-4160-e6c0-3403b4ecfbc1}"
@@ -28,6 +28,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{909641b3-a16e-c49e-bedf-f6433d2f21d6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{909641b3-a16e-c49e-bedf-f6433d2f21d6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{e13ce6aa-fb07-ddd2-986f-936d45728818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{e13ce6aa-fb07-ddd2-986f-936d45728818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8859578b-a1fe-f1f8-0ecb-c0679aeb3519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8859578b-a1fe-f1f8-0ecb-c0679aeb3519}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{af8deb24-a4ff-de2c-7d72-189649239b66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -40,8 +42,6 @@ Global
 		{950f153b-e0a2-ed91-f051-f0e607cd4818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8a941ced-a0ef-9f93-5ad6-c5c4e9af1d8d}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8a941ced-a0ef-9f93-5ad6-c5c4e9af1d8d}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{e13ce6aa-fb07-ddd2-986f-936d45728818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{e13ce6aa-fb07-ddd2-986f-936d45728818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{475b2b1e-265e-23a6-652a-29c8fcba21eb}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{475b2b1e-265e-23a6-652a-29c8fcba21eb}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{dd77ee92-ba58-4160-e6c0-3403b4ecfbc1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
